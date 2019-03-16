@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MainPage());
 
-class MyApp extends StatelessWidget {
+class AddProjectPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Add Project Page',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(title: 'Add Project Page'),
+    );
+  }
+}
+class MainPage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -43,8 +55,16 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+class Project {
+  Project(ame) {
+    this.name = name;
+  }
+  String name;
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  List<Project> projects = [];
 
   void _incrementCounter() {
     setState(() {
@@ -102,7 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => AddProjectPage()),
+            );
+          },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
