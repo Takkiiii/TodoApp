@@ -55,7 +55,7 @@ class MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final title = 'Sortable ListView';
+    final title = 'Project ListView';
 
     return new MaterialApp(
       title: title,
@@ -69,6 +69,7 @@ class MyAppState extends State<MyApp> {
                 child: new ListTile(
                     leading: new Icon(Icons.photo),
                     title: new Text(projects[index].title)),
+                    subtitle: new Text(projects[index].description)
               ),
         ),
       ),
