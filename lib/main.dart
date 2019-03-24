@@ -2,17 +2,56 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(new MyApp());
 
+class Project {
+  String title;
+  String description;
+  List<Task> tasks;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  Project(String title, String description) {
+    this.title = title;
+    this.description = description;
+    this.tasks = new List<Task>()
+      ..add(new Task("Task 1", "Description 1"))
+      ..add(new Task("Task 2", "Description 2"));
+    this.createdAt = new DateTime.now();
+    this.updatedAt = new DateTime.now();
+  }
+}
+
+class Task {
+  String title;
+  String description;
+  Status status;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  Task(String title, String description) {
+    this.title = title;
+    this.description = description;
+    this.status =Status.Todo;
+    this.createdAt = new DateTime.now();
+    this.updatedAt = new DateTime.now();
+  }
+}
+
+enum Status {
+  Todo,
+  Doing,
+  Done,
+  Close
+}
+
 class MyApp extends StatefulWidget {
   @override
   MyAppState createState() => new MyAppState();
 }
 
 class MyAppState extends State<MyApp> {
-  List<String> rows = new List<String>()
-    ..add('Row 1')
-    ..add('Row 2')
-    ..add('Row 3')
-    ..add('Row 4');
+  List<Project> projects = new List<Project>()
+    ..add(new Project("Project 1", "Description 1"))
+    ..add(new Project("Project 2", "Description 2"));
 
   @override
   Widget build(BuildContext context) {
@@ -25,18 +64,17 @@ class MyAppState extends State<MyApp> {
           title: new Text(title),
         ),
         body: new SortableListView(
-          items: rows,
+          items: projects,
           itemBuilder: (_, int index) => new Card(
                 child: new ListTile(
                     leading: new Icon(Icons.photo),
-                    title: new Text(rows[index])),
+                    title: new Text(projects[index].title)),
               ),
         ),
       ),
     );
   }
 }
-
 class SortableListView extends StatefulWidget {
   final List items;
   final IndexedWidgetBuilder itemBuilder;
@@ -67,10 +105,6 @@ class SortableListViewState extends State<SortableListView> {
                 builder: (BuildContext context, List<int> data,
                     List<dynamic> rejects) {
                   List<Widget> children = [];
-
-                  // If the dragged item is on top of this item, the we draw
-                  // a half-visible item to indicate that dropping the dragged
-                  // item will add it in this position.
                   if (data.isNotEmpty) {
                     children.add(
                       new Container(
@@ -115,8 +149,6 @@ class SortableListViewState extends State<SortableListView> {
 
   void _handleAccept(int data, int index) {
     setState(() {
-      // Decrement index so that after removing we'll still insert the item
-      // in the correct position.
       if (index > data) {
         index--;
       }
@@ -127,11 +159,7 @@ class SortableListViewState extends State<SortableListView> {
   }
 
   Widget _getListItem(BuildContext context, int index, [bool dragged = false]) {
-    // A little hack: our ListView has an extra invisible trailing item to
-    // allow moving the dragged item to the last position.
     if (index == widget.items.length) {
-      // This invisible item uses the previous item to determine its size. If
-      // the list is empty, though, there's no dragging really.
       if (widget.items.isEmpty) {
         return new Container();
       }
@@ -140,7 +168,6 @@ class SortableListViewState extends State<SortableListView> {
         child: _getListItem(context, index - 1),
       );
     }
-
     return new Material(
       elevation: dragged ? 20.0 : 0.0,
       child: widget.itemBuilder(context, index),
