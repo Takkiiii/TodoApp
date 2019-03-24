@@ -68,8 +68,8 @@ class MyAppState extends State<MyApp> {
           itemBuilder: (_, int index) => new Card(
                 child: new ListTile(
                     leading: new Icon(Icons.photo),
-                    title: new Text(projects[index].title)),
-                    subtitle: new Text(projects[index].description)
+                    title: new Text(projects[index].title),
+                    subtitle: new Text(projects[index].description)),
               ),
         ),
       ),
