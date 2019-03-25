@@ -2,6 +2,21 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(new MyApp());
 
+DataRepository repo = new DataRepository();
+
+class DataRepository {
+  List<Project> projects;
+  DataRepository() {
+    init();
+  }
+  init() {
+    projects = new List<Project>()
+      ..add(new Project("Project 1", "Description 1"))
+      ..add(new Project("Project 2", "Description 2"))
+      ..add(new Project("Project 3", "Description 3"));
+  }
+}
+
 class Project {
   String title;
   String description;
@@ -50,10 +65,7 @@ class MyApp extends StatefulWidget {
 
 class HomeRoute extends StatelessWidget {
   String title;
-  List<Project> projects = new List<Project>()
-    ..add(new Project("Project 1", "Description 1"))
-    ..add(new Project("Project 2", "Description 2"))
-    ..add(new Project("Project 3", "Description 3"));
+  List<Project> projects = repo.projects;
 
   HomeRoute(title) {
     this.title = title;
@@ -202,6 +214,8 @@ class EditProject extends StatefulWidget {
 }
 
 class _EditProjectState extends State<EditProject> {
+  Project _project = new Project('', '');
+  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -212,10 +226,55 @@ class _EditProjectState extends State<EditProject> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Center(
-        child: const CircularProgressIndicator(),
+    final Size screenSize = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Edit Project"),
       ),
+      body: Form(
+        key: this._formKey,
+        child: new ListView(
+          children: <Widget>[
+            new TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: new InputDecoration(
+                  hintText: 'ピカチュウ・ザ・ムービー',
+                  labelText: 'プロジェクト名'
+              ),
+              onSaved: (String title) {
+                this._project.title = title;
+              },
+            ),
+            new TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: new InputDecoration(
+                  hintText: '劇場版ポケットモンスタープロジェクト名のこと',
+                  labelText: '説明'
+              ),
+              onSaved: (String description) {
+                this._project.description = description;
+              },
+            ),
+            new Container(
+              width: screenSize.width,
+              child: new RaisedButton(
+                child: new Text(
+                  '追加',
+                  style: new TextStyle(
+                    color: Colors.white
+                  ),
+                ),
+                onPressed: () => {
+                   _formKey.currentState.save(),
+                  repo.projects.add(this._project),
+                  Navigator.pop(context)
+                },
+                color: Colors.blue,
+              ),
+            ),
+          ],
+        ),
+      )
     );
   }
 
