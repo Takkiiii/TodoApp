@@ -48,22 +48,23 @@ class MyApp extends StatefulWidget {
   MyAppState createState() => new MyAppState();
 }
 
-class MyAppState extends State<MyApp> {
+class HomeRoute extends StatelessWidget {
+  String title;
   List<Project> projects = new List<Project>()
     ..add(new Project("Project 1", "Description 1"))
-    ..add(new Project("Project 2", "Description 2"));
+    ..add(new Project("Project 2", "Description 2"))
+    ..add(new Project("Project 3", "Description 3"));
 
+  HomeRoute(title) {
+    this.title = title;
+  }
   @override
   Widget build(BuildContext context) {
-    final title = 'Project ListView';
-
-    return new MaterialApp(
-      title: title,
-      home: new Scaffold(
-        appBar: new AppBar(
+    return Scaffold(
+      appBar: new AppBar(
           title: new Text(title),
         ),
-        body: new SortableListView(
+      body: new SortableListView(
           items: projects,
           itemBuilder: (_, int index) => new Card(
                 child: new ListTile(
@@ -72,7 +73,30 @@ class MyAppState extends State<MyApp> {
                     subtitle: new Text(projects[index].description)),
               ),
         ),
-      ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: 'Add Project',
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditProject()),
+            );
+          },
+        ),
+    );
+  }
+}
+
+class MyAppState extends State<MyApp> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    final title = 'Project ListView';
+
+    return new MaterialApp(
+      title: title,
+      home: HomeRoute(title),
     );
   }
 }
@@ -128,10 +152,6 @@ class SortableListViewState extends State<SortableListView> {
                 },
               ),
               onDragStarted: () {
-                Scaffold.of(context).showSnackBar(
-                      new SnackBar(
-                          content: new Text("Drag the row to change places")),
-                    );
               },
               feedback: new Opacity(
                 opacity: 0.75,
@@ -173,5 +193,32 @@ class SortableListViewState extends State<SortableListView> {
       elevation: dragged ? 20.0 : 0.0,
       child: widget.itemBuilder(context, index),
     );
+  }
+}
+
+class EditProject extends StatefulWidget {
+  @override
+  _EditProjectState createState() => new _EditProjectState();
+}
+
+class _EditProjectState extends State<EditProject> {
+  @override
+  void initState() {
+    super.initState();
+
+    new Future.delayed(const Duration(seconds: 3))
+        .then((value) => handleTimeout());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Center(
+        child: const CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  void handleTimeout() {
   }
 }
