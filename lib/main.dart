@@ -64,25 +64,30 @@ class MyApp extends StatefulWidget {
 }
 
 class HomeRoute extends StatelessWidget {
-  String title;
-  List<Project> projects = repo.projects;
+  final _title = "Home";
+  final _projects = repo.projects;
 
-  HomeRoute(title) {
-    this.title = title;
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-          title: new Text(title),
+          title: new Text(this._title),
         ),
       body: new SortableListView(
-          items: projects,
+          items: this._projects,
           itemBuilder: (_, int index) => new Card(
                 child: new ListTile(
-                    leading: new Icon(Icons.photo),
-                    title: new Text(projects[index].title),
-                    subtitle: new Text(projects[index].description)),
+                  leading: new Icon(Icons.photo),
+                  title: new Text(this._projects[index].title),
+                  subtitle: new Text(this._projects[index].description),
+                  onTap: () {
+                    print(index);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => new TaskListPage(this._projects[index])),
+                    );
+                  },
+                ),
               ),
         ),
       floatingActionButton: FloatingActionButton(
@@ -100,15 +105,13 @@ class HomeRoute extends StatelessWidget {
 }
 
 class MyAppState extends State<MyApp> {
-
-
   @override
   Widget build(BuildContext context) {
     final title = 'Project ListView';
 
     return new MaterialApp(
       title: title,
-      home: HomeRoute(title),
+      home: new HomeRoute(),
     );
   }
 }
@@ -123,7 +126,6 @@ class SortableListView extends StatefulWidget {
   @override
   State createState() => new SortableListViewState();
 }
-
 class SortableListViewState extends State<SortableListView> {
   @override
   Widget build(BuildContext context) {
@@ -207,7 +209,6 @@ class SortableListViewState extends State<SortableListView> {
     );
   }
 }
-
 class EditProject extends StatefulWidget {
   @override
   _EditProjectState createState() => new _EditProjectState();
@@ -283,5 +284,52 @@ class _EditProjectState extends State<EditProject> {
   }
 
   void handleTimeout() {
+  }
+}
+
+class TaskListPage extends StatefulWidget {
+  Project _project;
+  TaskListPage(Project project) {
+    this._project = project;
+  }
+  @override
+  _TaskListPageState createState() => new _TaskListPageState(this._project);
+}
+
+class _TaskListPageState extends State<TaskListPage> {
+  final String _title = "TaskList";
+  Project _project;
+
+  _TaskListPageState(Project project) {
+    this._project =project;
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: new AppBar(
+          title: new Text(this._title),
+        ),
+      body: new SortableListView(
+          items: this._project.tasks,
+          itemBuilder: (_, int index) => new Card(
+                child: new ListTile(
+                  leading: new Icon(Icons.photo),
+                  title: new Text(this._project.tasks[index].title),
+                  subtitle: new Text(this._project.tasks[index].description),
+                  onTap: () {},
+                ),
+              ),
+        ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: 'Add Project',
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditProject()),
+            );
+          },
+        ),
+    );
   }
 }
