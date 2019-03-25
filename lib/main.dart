@@ -224,6 +224,14 @@ class _EditProjectState extends State<EditProject> {
         .then((value) => handleTimeout());
   }
 
+  void _addProject() {
+    if (this._formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      repo.projects.add(this._project);
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -264,11 +272,7 @@ class _EditProjectState extends State<EditProject> {
                     color: Colors.white
                   ),
                 ),
-                onPressed: () => {
-                   _formKey.currentState.save(),
-                  repo.projects.add(this._project),
-                  Navigator.pop(context)
-                },
+                onPressed: () => this._addProject(),
                 color: Colors.blue,
               ),
             ),
