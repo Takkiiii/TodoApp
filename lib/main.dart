@@ -81,7 +81,6 @@ class HomeRoute extends StatelessWidget {
                   title: new Text(this._projects[index].title),
                   subtitle: new Text(this._projects[index].description),
                   onTap: () {
-                    print(index);
                     Navigator.push(
                       context,
                       new MaterialPageRoute<Null>(
@@ -294,9 +293,9 @@ class _EditProjectState extends State<EditProject> {
 }
 
 class TaskListPage extends StatelessWidget {
-  Project _project;
+  List<Task> _tasks;
   TaskListPage(Project project) {
-    this._project = project;
+    this._tasks = project.tasks;
   }
   @override
   Widget build(BuildContext context) {
@@ -304,12 +303,18 @@ class TaskListPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Task List'),
       ),
-      body: ListView.builder(
-        itemBuilder: (BuildContext contex, int index) {
-          return Text(this._project.tasks[index].title);
-        },
-        itemCount: _project.tasks.length,
-      ),
+      body: new SortableListView(
+          items: this._tasks,
+          itemBuilder: (_, int index) => new Card(
+                child: new ListTile(
+                  leading: new Icon(Icons.photo),
+                  title: new Text(this._tasks[index].title),
+                  subtitle: new Text(this._tasks[index].description),
+                  onTap: () {
+                  },
+                ),
+              ),
+        ),
       floatingActionButton: FloatingActionButton(
           tooltip: 'Add Project',
           child: Icon(Icons.add),
