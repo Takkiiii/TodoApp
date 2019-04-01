@@ -84,7 +84,10 @@ class HomeRoute extends StatelessWidget {
                     print(index);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => new TaskListPage(this._projects[index])),
+                      new MaterialPageRoute<Null>(
+                        settings: const RouteSettings(name: "/tasks"),
+                        builder: (BuildContext context) => TaskListPage(this._projects[index]),
+                      ),
                     );
                   },
                 ),
@@ -112,6 +115,9 @@ class MyAppState extends State<MyApp> {
     return new MaterialApp(
       title: title,
       home: new HomeRoute(),
+      routes: {
+        '/tasks': (BuildContext context) => TaskListPage(new Project('', '')),
+      },
     );
   }
 }
@@ -287,47 +293,27 @@ class _EditProjectState extends State<EditProject> {
   }
 }
 
-class TaskListPage extends StatefulWidget {
+class TaskListPage extends StatelessWidget {
   Project _project;
   TaskListPage(Project project) {
     this._project = project;
   }
   @override
-  _TaskListPageState createState() => new _TaskListPageState(this._project);
-}
-
-class _TaskListPageState extends State<TaskListPage> {
-  final String _title = "TaskList";
-  Project _project;
-
-  _TaskListPageState(Project project) {
-    this._project =project;
-  }
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-          title: new Text(this._title),
-        ),
-      body: new SortableListView(
-          items: this._project.tasks,
-          itemBuilder: (_, int index) => new Card(
-                child: new ListTile(
-                  leading: new Icon(Icons.photo),
-                  title: new Text(this._project.tasks[index].title),
-                  subtitle: new Text(this._project.tasks[index].description),
-                  onTap: () {},
-                ),
-              ),
-        ),
+      appBar: AppBar(
+        title: Text('Task List'),
+      ),
+      body: ListView.builder(
+        itemBuilder: (BuildContext contex, int index) {
+          return Text(this._project.tasks[index].title);
+        },
+        itemCount: _project.tasks.length,
+      ),
       floatingActionButton: FloatingActionButton(
           tooltip: 'Add Project',
           child: Icon(Icons.add),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => EditProject()),
-            );
           },
         ),
     );
