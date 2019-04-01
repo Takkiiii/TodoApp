@@ -292,6 +292,94 @@ class _EditProjectState extends State<EditProject> {
   }
 }
 
+class EditTask extends StatefulWidget {
+  List<Task> _tasks;
+  EditTask(List<Task> tasks) {
+    this._tasks = tasks;
+  }
+  @override
+  _EditTaskState createState() => new _EditTaskState(this._tasks);
+}
+
+
+class _EditTaskState extends State<EditTask> {
+  List<Task> _tasks;
+  Task _task = new Task('', '');
+  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  _EditTaskState(List<Task> tasks) {
+    this._tasks = tasks;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    new Future.delayed(const Duration(seconds: 3))
+        .then((value) => handleTimeout());
+  }
+
+  void _addTask() {
+    if (this._formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      this._tasks.add(this._task);
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Edit Project"),
+      ),
+      body: Form(
+        key: this._formKey,
+        child: new ListView(
+          children: <Widget>[
+            new TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: new InputDecoration(
+                  hintText: '早起きをする',
+                  labelText: 'タスク名'
+              ),
+              onSaved: (String title) {
+                this._task.title = title;
+              },
+            ),
+            new TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: new InputDecoration(
+                  hintText: '毎朝６時には起きること',
+                  labelText: '説明'
+              ),
+              onSaved: (String description) {
+                this._task.description = description;
+              },
+            ),
+            new Container(
+              width: screenSize.width,
+              child: new RaisedButton(
+                child: new Text(
+                  '追加',
+                  style: new TextStyle(
+                    color: Colors.white
+                  ),
+                ),
+                onPressed: () => this._addTask(),
+                color: Colors.blue,
+              ),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+
+  void handleTimeout() {
+  }
+}
+
 class TaskListPage extends StatelessWidget {
   List<Task> _tasks;
   TaskListPage(Project project) {
@@ -316,9 +404,13 @@ class TaskListPage extends StatelessWidget {
               ),
         ),
       floatingActionButton: FloatingActionButton(
-          tooltip: 'Add Project',
+          tooltip: 'Add Task',
           child: Icon(Icons.add),
           onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditTask(this._tasks)),
+            );
           },
         ),
     );
